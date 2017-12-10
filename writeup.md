@@ -123,25 +123,24 @@ def more_data(X, y):
 
 With the conventional techniques I am putting all features on the same scale which improves learning as well as simplifies it by reducing the dimesions which will not necessarily yield better results. Augmenting the data allowed me to converge faster in fewer epochs than necessary. 30 vs 50. 
 
-Model Architecture - The submission provides details of the characteristics and qualities of the architecture, including the type of model used, the number of layers, and the size of each layer. Visualizations emphasizing particular qualities of the architecture are encouraged.
 
 3.2 Model Architecture
 Used the recommended LeNet architecture with
-* Convolution layer 1. The output shape should be 28x28x6.
-* Activation 1. - Rectified linear unit (ReLU) Activation
-* Pooling layer 1. The output shape should be 14x14x6.
-* Convolution layer 2. The output shape should be 10x10x16.
-* Activation 2. Rectified linear unit (ReLU) Activation
-* Pooling layer 2. The output shape should be 5x5x16.
-* Flatten layer. Flatten the output shape of the final pooling layer such that it's 1D instead of 3D. 
-* Fully connected layer 1. This should have 120 outputs.
-* Activation 3. Your choice of activation function.
-* Fully connected layer 2. This should have 84 outputs.
-* Activation 4. Your choice of activation function.
-* Fully connected layer 3. This should have 10 outputs.
 
-
-Model Training - The submission describes how the model was trained by discussing what optimizer was used, batch size, number of epochs and values for hyperparameters.
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Convolution layer         		| strides = 1x1, Input = 32x32x1 image, Output = 28x28x6 | 
+| Activation     	|  Rectified linear unit (ReLU) Activation	|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6 				|
+| Convolution layer 	    | strides = 1x1, Input = 14x14x6, Output = 10x10x6  |
+| Activation     	|  Rectified linear unit (ReLU) Activation	|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x16 				|
+| Flatten | output = 100   |
+| Fully connected		|  Input = 400. Output = 120.        									|
+| Activation     	|  Rectified linear unit (ReLU) Activation	|
+| Fully connected		|  Input = 120. Output = 84         									|
+| Activation     	|  Rectified linear unit (ReLU) Activation	|
+|  Fully connected				| Input = 84. Output = 43.        									|
 
 3.3 Model Training
 
@@ -149,10 +148,78 @@ Used the AdamOptimizer which although generally used more computation power than
 
 The initial epochs of 20 with no augmented data resulted in 91% on validation set, I changed the epochs size to 50 while retaining the same batch size, this gave me a validation of 93%. I augmented the data and changed the epochs to 40 since it was converging faster now which gave me a final result of 93.7%. 
 
-Solution Approach - The submission describes the approach to finding a solution. Accuracy on the validation set is 0.93 or greater.
-
 3.4 Solution Approach
+The eventual model yielded following results
 
+````
+Model saved in (minutes) =  44.440166942278545
+Validation Accuracy = 0.937
+Test Accuracy = 0.916
+````
+
+The model was based as mentioned earlier on LeNet architecture. It is based on the ever popular Convolutional Neural Networks which does an excellent job in image classification. LeNet is one of the simple implementation of CNN and made sense to use it first. Since CNN does the feature extraction for us already, it was no-brainer to use it for a finite set of pixel matrices. Other alternatives could have been ResNet or AlexNet implementation of CNN. 
+
+Once the architecture was setup, I went with a default iteration of 10,15, 20 Epochs. They were converging close to 91%. Once I increased the Epochs to 50, I found 93% validation rate which would have been enough for this assignment. I tried to augment the data further to reduce the epochs, the image augmentation I did initially was actually not performing well. THat was due to a bug in the code which caused augmented image to be wiped out completely from PIL ilbrary. I used the skimage library which was performant and gave me good augmented image. This excercise allowed me to reduce epochs and have faster convergence. 
+
+I didn't see any instance of overfitting but I still tried to add a dropout regularization before the final fully connected layer. I didn't see any major performance improvement. 
 
 4. Test a Model on New Images
+4.1 Acquiring New Images - Downloaded the following 5 images and cropped/resized them to 32x32
 
+![4-1-1.png] (writeup/4-1-1.png)
+
+The images were downloaded based on the background, orientation, light effects and some additional noise in the sign itself.
+
+4.2 Performance on New Images - The submission documents the performance of the model when tested on the captured images. The performance on the new images is compared to the accuracy results of the test set.
+
+The model correctly predicted 6 out of 7 images which resulted in an accuracy of 85.71%. This is in contrast to accuracy on validation set of 93.7%
+
+4.3 Model Certainty - Softmax Probabilities The top five softmax probabilities of the predictions on the captured images are outputted. The submission discusses how certain or uncertain the model is of its predictions.
+
+These are the softmax probablities of images and their respective classes
+Softmax
+````
+[
+       [  5.02068863e+01,   2.50825157e+01,   1.85059738e+01, 8.66750336e+00,   2.37566519e+00],
+       [  6.41252060e+01,   5.09600334e+01,   1.85903034e+01, 1.69791813e+01,   9.98717499e+00],
+       [  4.63154068e+01,   3.62617850e+00,   1.33984554e+00, -4.73022223e-01,  -2.24502993e+00],
+       [  1.33870726e+01,   8.82190990e+00,   7.61714554e+00, 5.78275621e-02,  -5.13552046e+00],
+       [  3.18689346e+01,   2.00786018e+01,  -3.91756743e-02, -2.41427922e+00,  -3.69053125e+00],
+       [  1.19942913e+01,   4.44106436e+00,   2.56481075e+00, -3.46791601e+00,  -8.00393200e+00],
+       [  5.44795227e+01,   1.69301682e+01,   5.03529644e+00, 1.74080563e+00,  -2.98584270e+00]
+]
+````
+
+Classes
+
+
+````
+[
+       [31, 23, 37, 19, 10],
+       [17, 41, 14, 28, 33],
+       [38, 25,  1, 26, 22],
+       [12, 40, 41, 17, 14],
+       [ 1,  5, 25,  2, 33],
+       [11, 30, 28,  6, 35]
+]
+````
+
+
+![Figure_1-0.png] (writeup/Figure_1-0.png)
+
+![Figure_1-1.png] (writeup/Figure_1-1.png)
+
+![Figure_1-2.png] (writeup/Figure_1-2.png)
+
+![Figure_1-3.png] (writeup/Figure_1-3.png)
+
+![Figure_1-4.png] (writeup/Figure_1-4.png)
+
+![Figure_1-5.png] (writeup/Figure_1-5.png)
+
+![Figure_1-6.png] (writeup/Figure_1-6.png)
+
+
+The model correctly predicted 6 out of 7 images. The image where it failed was a sign with additional information at the bottom. 
+
+![5_18.png] (data/online/5_18.png)
