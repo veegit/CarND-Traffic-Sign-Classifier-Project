@@ -18,8 +18,8 @@ The goals / steps of this project are the following:
 ## Rubric Points
 1. Attached the required files 
 - [ ] [Traffic_Sign_Classifier.ipynb](Traffic_Sign_Classifier.ipynb)
-- [ ] [traffic-sign-data.zip] (data/online-data/traffic-sign-data.zip)
-- [ ] [report.pdf] (report.pdf)
+- [ ] [traffic-sign-data.zip] (writeup/traffic-sign-data.zip)
+- [ ] [report.html] (writeup/report.html)
 - [ ] [writeup.md] (writeup.md)
 
 
